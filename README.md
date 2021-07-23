@@ -25,7 +25,7 @@ Initial müssen die Städte einmal gesynct werden, um mit dem Städtenamen arbei
 
 ~~~bash
 ./eg-cli.py --login PullCities
-~~~bash
+~~~
 
 Anschließend können die Wege berechnet werden:
 
