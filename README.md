@@ -18,19 +18,18 @@ Ganz allgemein:
 - Optionales Eintragen der Aufträge in der aktuellen Gruppe (`-a`-Parameter)
 
 ~~~bash
-./eg-cli.py RoutePlaner
+$ ./eg-cli.py RoutePlaner
 ~~~
 
 Initial müssen die Städte einmal gesynct werden, um mit dem Städtenamen arbeiten zu können:
 
 ~~~bash
-./eg-cli.py --login PullCities
+$ ./eg-cli.py --login PullCities
 ~~~
 
 Anschließend können die Wege berechnet werden:
 
 ~~~bash
-./eg-cli.py --login RoutePlaner -s "Draga Sol" -t "Dur Celusse" -l
 $ ./eg-cli.py --login RoutePlaner -s "Draga Sol" -t "Dur Celusse" -l
 User: <user>
 Password: 
