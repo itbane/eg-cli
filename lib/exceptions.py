@@ -1,0 +1,2 @@
+class EGError(Exception):
+  pass

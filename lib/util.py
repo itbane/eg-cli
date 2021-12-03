@@ -4,6 +4,8 @@ import argparse
 import sys
 import json
 
+from exceptions import *
+
 def printVerbose(msg,verbose):
   if verbose:
     print(msg)
@@ -29,15 +31,19 @@ def performLogin(user,password):
   response = requests.request('POST','https://evergore.de/login',headers=HDRS,data=data,allow_redirects=False)
   if response.status_code == 302:
     nc=re.search("(eg_sid=[^;]*).*", response.headers['Set-Cookie']).group(1)
+  elif response.status_code == 200:
+    if (re.search("Ihr seid bereits angemeldet",response.text)):
+      print(response.headers)
   else:
     print("Got incorrect response code "+str(response.status_code))
-    sys.exit(1)
+    print(response.text)
+    raise EGError
   if nc:
     setCookie(nc)
     return nc
   else:
     print("Could not read cookie from login")
-    sys.exit(1)
+    raise EGError
 
 def printHeaders():
   print(HDRS)
@@ -70,6 +76,13 @@ def readCities(filename='cities.json'):
 def saveCities(data,filename='cities.json'):
     with open(filename,'w',encoding='utf-8') as f:
         json.dump(data,f,ensure_ascii=False, indent=4)
+
+def getCityList(world):
+  cities = readCities()
+  try:
+    return list(cities[world].keys())
+  except KeyError:
+    return []
 
 def getCity(city):
   cities = readCities()

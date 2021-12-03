@@ -12,7 +12,7 @@ import PullCities
 parser = argparse.ArgumentParser(description='find Evergore Battle')
 
 # general arguments
-parser.add_argument('-w', '--world', metavar="<world>", help='The world to use', dest="world", type=str, choices=["zyrthania","ikandur"], default='zyrthania')
+parser.add_argument('-w', '--world', metavar="<world>", help='The world to use', dest="world", type=str, choices=["zyrthania","endurias"], default='zyrthania')
 parser.add_argument('-v', '--verbose', help='Activate verbose mode.', dest="verbose", action="store_true")
 
 # how to login - mutually exclusive, but general
