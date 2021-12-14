@@ -13,7 +13,6 @@ def getCities(verbose,world):
 
   for tid,tname in re.findall(pattern,response.text):
     response = requests.request('GET','https://evergore.de/'+world+'?page=info_town&town_id='+str(tid),headers=HDRS,allow_redirects=False)
-    print(response.text)
     if not world in tdata.keys():
       X,Y = splitCoord(re.search("page=map&[^>]*>(\d+:\d+)</a>", response.content.decode('utf-8')).group(1))
       tdata[world] = {}
