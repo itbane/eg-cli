@@ -17,7 +17,7 @@ parser.add_argument('-w', '--world', metavar="<world>", help='The world to use',
 parser.add_argument('-v', '--verbose', help='Activate verbose mode.', dest="verbose", action="store_true")
 
 # how to login - mutually exclusive, but general
-auth = parser.add_mutually_exclusive_group(required=True)
+auth = parser.add_mutually_exclusive_group(required=False)
 auth.add_argument('--login', help='If login should be performed. Mutually exclusive with --cookie', dest="login", action='store_true')
 auth.add_argument('--cookie', metavar="<cookie>", help='Cookie from existing login. Mutually exclusive with --login', dest="cookie", type=str)
 
@@ -58,9 +58,9 @@ elif args.cookie:
   cookie=args.cookie
   setCookie(cookie)
 
-chooseCharacter(args.world)
-
-printVerbose("Command: "+args.command,args.verbose)
+if args.login or args.cookie:
+  chooseCharacter(args.world)
+  printVerbose("Command: "+args.command,args.verbose)
 
 if args.command == 'BattleFinder':
   BattleFinder.findBattleIDs(args.world,args.verbose,args.player,args.ll,args.ul,args.first)
