@@ -5,6 +5,11 @@ import sys
 import json
 
 from exceptions import *
+def readCredentials(verbose):
+  printVerbose("Loging in",verbose)
+  user=input("User: ")
+  password=getpass.getpass()
+  return user,password
 
 def printVerbose(msg,verbose):
   if verbose:

@@ -2,6 +2,7 @@
 import argparse
 import sys
 import getpass
+import json
 
 sys.path.append("./lib")
 from util import *
@@ -43,9 +44,14 @@ rpParser.add_argument('-c', '--create-group', help='should the group be opened (
 args = parser.parse_args()
 
 if args.login:
-  printVerbose("Loging in",args.verbose)
-  user=input("User: ")
-  password=getpass.getpass()
+  try:
+    with open('.config') as f:
+      data = json.load(f)
+    user = data['user']
+    password = data['password']
+  except:
+    printVerbose("config not found, reading from stdin",args.verbose)
+    user,password = readCredentials(args.verbose)
   cookie=performLogin(user,password)
   printVerbose("Got cookie: "+cookie,args.verbose)
 elif args.cookie:

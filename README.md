@@ -12,6 +12,16 @@ Ganz allgemein:
 
 - `--login` Parameter fragt Benutzername/Passwort ab. Das wird benötigt, um mit dem Spiel zu interagieren. Die Daten werden nirgends zwischengespeichert oder geloggt.
 
+Die Logindaten können in der Datei `.config` im aktuellen Ordner abgelegt werden. Es wird das JSON-Format erwartet.
+
+Beispiel:
+~~~json
+{
+"user":"mein-user",
+"password":"mein-passwort"
+}
+~~~
+
 ### Routenplaner
 
 - Berechnet die kürzeste Route
