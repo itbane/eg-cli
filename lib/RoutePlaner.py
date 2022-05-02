@@ -1,10 +1,40 @@
 import dijkstra
+import json
 from util import *
+
+def readCache():
+  try:
+    with open('.cache') as f:
+      routeCache = json.load(f)
+  except FileNotFoundError:
+      routeCache = {}
+#      printVerbose("Route cache not found",verbose)
+  except json.decoder.JSONDecodeError:
+      routeCache = {}
+#      printVerbose("Route cache empty",verbose)
+  return routeCache
+def writeCache(cache):
+  print(cache)
+  with open('.cache',"w") as f:
+    routeCache = json.dump(cache, f)
+  return routeCache
 
 def calculateRoute(sX,sY,tX,tY,verbose,world):
   printVerbose("Calculating route from "+str(sX)+":"+str(sY)+" to "+str(tX)+":"+str(tY),verbose)
-  (orderlist,operation_duration, operation, shortestpath) = dijkstra.dijkstra(int(sX),int(sY),int(tX),int(tY),0,world)
-  return orderlist
+  cache = readCache()
+  routeName = sX+":"+sY+";"+tX+":"+tY
+  if not routeName in cache:
+    printVerbose("Route not found in cache",verbose)
+    (orderlist,operation_duration, operation, shortestpath) = dijkstra.dijkstra(int(sX),int(sY),int(tX),int(tY),0,world)
+    cache[routeName] = {}
+    cache[routeName]["orderlist"] = orderlist
+    cache[routeName]["operation_duration"] = str(operation_duration)
+    writeCache(cache)
+  else:
+    printVerbose("Route found in cache",verbose)
+    orderlist = cache[routeName]['orderlist']
+    operation_duration = cache[routeName]['operation_duration']
+  return orderlist,operation_duration
 
 def addTravel(tX,tY):
   data = {
