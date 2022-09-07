@@ -16,7 +16,9 @@ def findBattleIDs(world,verbose,player,ll,ul,first):
   while battleID <= ul:
     printVerbose("looking for battle ID "+str(battleID),verbose)
     battleContent=getBattle(world,battleID)
-    if re.search("setParticipant\('.*,'"+player+"'", battleContent):
+    print(battleContent)
+    print(player)
+    if re.search("setParticipant\(.*,[\"']"+player+"[\"']", battleContent):
       print("Battle found: "+str(battleID))
       if first:
         printVerbose("Got --first parameter, not looking further...",verbose)
@@ -25,7 +27,3 @@ def findBattleIDs(world,verbose,player,ll,ul,first):
       printVerbose("BattleID higher than existing battles - aborting",verbose)
       break
     battleID+=1
-
-def getBattle(world,battleID):
-  response = requests.request('GET','https://evergore.de/'+world+'?page=battle_report&battle_id='+str(battleID),headers=HDRS,allow_redirects=False)
-  return response.text
