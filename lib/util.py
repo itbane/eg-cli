@@ -103,3 +103,57 @@ def getCity(city):
 def getToken(page):
   response = requests.request('GET','https://evergore.de/zyrthania?page='+page,headers=HDRS)
   return re.search('name="token"\s*value="(.*?)"', response.content.decode('utf-8')).group(1)
+
+def getBattle(world,battleID,form='text'):
+  response = requests.request('GET','https://evergore.de/'+world+'?page=battle_report&battle_id='+str(battleID),headers=HDRS,allow_redirects=False)
+  if 'text' in form:
+    return response.text
+  elif 'iter' in form:
+    return response.iter_lines()
+
+def printBattleStats(res,filter=[],form='text'):
+    for p in res.keys():
+        if p == 'meta':
+            print("Stats:")
+            print("  Anzahl Kämpfe: "+str(res['meta']['no-battles']))
+            continue
+        print(res[p]["name"]+":")
+        if 'Bolzen' in filter:
+            try:
+                for k,v in res[p]['no-bolzen'].items():
+                    print("  "+k+": "+str(v))
+            except KeyError:
+                pass
+        if 'Schaden' in filter:
+            try:
+                print("  Schaden (Summe): "+str(res[p]['dmg']))
+            except KeyError:
+                pass
+        if 'Heilung' in filter:
+            try:
+                print("  Heilung (Summe): "+str(res[p]['heal']))
+            except KeyError:
+                pass
+        if 'Stats' in filter:
+            print("  Hits: "+str(res[p]['hits']))
+            print("  Misses: "+str(res[p]['miss']))
+            print("  Krits: "+str(res[p]['krits']))
+            try:
+                print("  Trefferchance: "+str(int(res[p]['hits']/(res[p]['hits']+res[p]['miss'])*10000)/100)+"%")
+            except ZeroDivisionError:
+                print("  Trefferchance: 0%")
+            try:
+                print("  Kritchance: "+str(int(res[p]['krits']/res[p]['hits']*10000)/100)+"%")
+            except ZeroDivisionError:
+                print("  Kritchance: 0%")
+            try:
+                print("  Ausweichchance: "+str(int(res[p]['dodged']/(res[p]['dodged']+res[p]['attacked'])*10000)/100)+"%")
+            except ZeroDivisionError:
+                print("  Ausweichchance: 0%")
+
+def splitParams(string):
+    params = string.split(',')
+    for i,v in enumerate(params):
+        if (m := re.search('^"(.*)"$',v)):
+            params[i] = m.group(1)
+    return params

@@ -7,6 +7,7 @@ import json
 sys.path.append("./lib")
 from util import *
 import BattleFinder
+import BattleParser
 import RoutePlaner
 import PullCities
 
@@ -24,6 +25,7 @@ auth.add_argument('--cookie', metavar="<cookie>", help='Cookie from existing log
 # subparsers for different functionalities
 subparser = parser.add_subparsers(dest='command')
 bfParser = subparser.add_parser('BattleFinder')
+bpParser = subparser.add_parser('BattleParser')
 rpParser = subparser.add_parser('RoutePlaner')
 pcParser = subparser.add_parser('PullCities')
 
@@ -40,6 +42,11 @@ rpParser.add_argument('-a', '--add', help='should commands be added?', dest='add
 rpParser.add_argument('-l', '--list', help='should commands be printed?', dest='list', action='store_true')
 rpParser.add_argument('-c', '--create-group', help='should the group be opened (if not already in group)', dest='create',action='store_false')
 
+# BattleParser
+bpParser.add_argument('--id', metavar='<battleid>', help='The Battle ID to be analysed', dest='battleid', type=int)
+bpParser.add_argument('--report',metavar='<reportid>',help='The Message ID of the group to be analysed', dest='msgid',type=int)
+bpParser.add_argument('--print',help='If the result should be printed', dest='print', action='store_true')
+bpParser.add_argument('--filter',metavar='<feld>[,<feld>]',help='Comma-separated list of Fields to print', dest='filter', type=str,default="")
 
 args = parser.parse_args()
 
@@ -68,3 +75,13 @@ elif args.command == 'PullCities':
   PullCities.getCities(args.verbose,args.world)
 elif args.command == 'RoutePlaner':
   RoutePlaner.travel(args.source,args.target,args.verbose,args.add,args.list,args.create,args.world)
+elif args.command == 'BattleParser':
+    printVerbose("Running BattleParser",args.verbose)
+    if args.battleid is not None:
+        res = BattleParser.analyseBattle(args.world,args.battleid,args.verbose)
+    elif args.msgid is not None:
+        res = BattleParser.analyseHunt(args.world,args.msgid,args.verbose)
+    else:
+        print("Need either '--msgid' or '--id'")
+    if args.print:
+        printBattleStats(res,args.filter.split(','))

@@ -1,4 +1,5 @@
 import dijkstra
+import datetime
 import json
 from util import *
 
@@ -51,10 +52,19 @@ def addTravel(tX,tY):
 def travel(source,target,verbose,add,list,create,world):
   sX,sY = splitCoord(source)
   tX,tY = splitCoord(target)
-  orderlist = calculateRoute(sX,sY,tX,tY,verbose,world)
+  orderlist,duration = calculateRoute(sX,sY,tX,tY,verbose,world)
+  date = datetime.datetime.now()
+  sumTime = sum(o[2] for o in orderlist)
   if list:
+    print("Gesamte Dauer: "+str(sumTime))
     for order in orderlist:
-      print(str(order[0])+":"+str(order[1]))
+      print(order)
+      try:
+        print(str(order[0])+":"+str(order[1])+" "+str(lastTime + (datetime.timedelta(minutes=order[2]) )))
+      except UnboundLocalError:
+        print(str(order[0])+":"+str(order[1])+" "+str(date + datetime.timedelta(minutes=order[2])))
+      lastOrder = order
+      lastTime = date + datetime.timedelta(minutes=order[2])
   if add:
     for order in orderlist:
       printVerbose("Adding travel commands",verbose)
