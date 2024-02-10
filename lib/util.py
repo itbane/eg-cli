@@ -15,49 +15,8 @@ def printVerbose(msg,verbose):
   if verbose:
     print(msg)
 
-# Default values
-HDRS={
-  'User-Agent': 'itbane eg automation',
-  'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-  'Accept-Language': 'en-US,en;q=0.5',
-  'Connection': 'keep-alive',
-  'Upgrade-Insecure-Requests': '1'
-}
-
-def setCookie(cookie):
-    HDRS['Cookie'] = cookie
-
-def performLogin(user,password):
-  data={
-    'forward':'portal',
-    'login':user,
-    'password':password
-  }
-  response = requests.request('POST','https://evergore.de/login',headers=HDRS,data=data,allow_redirects=False)
-  if response.status_code == 302:
-    nc=re.search("(eg_sid=[^;]*).*", response.headers['Set-Cookie']).group(1)
-  elif response.status_code == 200:
-    if (re.search("Ihr seid bereits angemeldet",response.text)):
-      print(response.headers)
-  else:
-    print("Got incorrect response code "+str(response.status_code))
-    print(response.text)
-    raise EGError
-  if nc:
-    setCookie(nc)
-    return nc
-  else:
-    print("Could not read cookie from login")
-    raise EGError
-
 def printHeaders():
   print(HDRS)
-
-def chooseCharacter(world):
-  response = requests.request('GET','https://evergore.de/portal',headers=HDRS,allow_redirects=False)
-  charNumber=re.search('action="/'+world+'".*\n.*\n.*value="(.*?)"', response.content.decode('utf-8')).group(1)
-  data = {'character': charNumber}
-  response = requests.request('POST','https://evergore.de/'+world,headers=HDRS,data=data)
 
 def egCoord(coord):
   pat=re.compile(r"^\d+:\d+$")
@@ -157,3 +116,73 @@ def splitParams(string):
         if (m := re.search('^"(.*)"$',v)):
             params[i] = m.group(1)
     return params
+
+
+class EvergoreClient:
+    def __init__(self, world, login=None, cookie=None):
+        self.baselink = "https://evergore.de/"
+        self.link = "{}{}".format(self.baselink, world)
+        self.world = world
+        self.headers = {
+            "User-Agent": "itbane eg automation",
+            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+            "Accept-Language": "en-US,en;q=0.5",
+            "Connection": "keep-alive",
+            "Upgrade-Insecure-Requests": "1",
+        }
+        self.headers["Cookie"] = self.__get_cookie(login, cookie)
+        self.__chooseCharacter(world)
+
+    def get_from_eg(self, url, params=None):
+        if params is None:
+            params = {}
+        return requests.get(url, params=params, headers=self.headers)
+
+    def post_to_eg(self, url, params=None, data=None):
+        if data is None:
+            data = {}
+        if params is None:
+            params = {}
+        return requests.post(url, params=params, headers=self.headers, data=data)
+
+    def __chooseCharacter(self, world):
+        response = self.get_from_eg(self.baselink + "portal")
+        charNumber=re.search('action="/'+world+'".*\n.*\n.*value="(.*?)"', response.content.decode('utf-8')).group(1)
+        data = {'character': charNumber}
+        response = self.post_to_eg(self.link,data=data)
+
+    def __get_cookie(self, login, cookie):
+        if login is not None:
+            try:
+                with open('.config') as f:
+                    data = json.load(f)
+                    user = data['user']
+                    password = data['password']
+            except (PermissionError, FileNotFoundError, KeyError):
+                printVerbose("config not found, reading from stdin",args.verbose)
+                user,password = readCredentials(args.verbose)
+
+            return self.__performLogin(user,password)
+        if cookie is not None:
+            return cookie
+
+    def __performLogin(self, user, password):
+        data={
+            'forward':'portal',
+            'login':user,
+            'password':password
+        }
+        response = requests.request('POST','https://evergore.de/login', headers=self.headers,
+                                    data=data, allow_redirects=False)
+        if response.status_code == 302:
+            return re.search("(eg_sid=[^;]*).*", response.headers['Set-Cookie']).group(1)
+        elif response.status_code == 200:
+            if (re.search("Ihr seid bereits angemeldet",response.text)):
+                print(response.headers)
+            else:
+                print("Got incorrect response code "+str(response.status_code))
+                print(response.text)
+                raise EGError
+
+        print("Could not read cookie from login")
+        raise EGError

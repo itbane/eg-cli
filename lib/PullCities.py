@@ -3,27 +3,30 @@ import re
 
 from util import *
 
-def getCities(verbose,world):
-  printVerbose('Pulling cities for '+world,verbose)
-  response = requests.request('GET','https://evergore.de/'+world+'?page=ranking_town',headers=HDRS,allow_redirects=False)
+def getCities(eg, verbose):
+  printVerbose('Pulling cities for '+eg.world,verbose)
+  response = eg.get_from_eg(eg.link, params={"page": "ranking_town"})
   pattern = re.compile(r'page=info_town&town_id=(\d+)">([^<]*)<')
 
   tdata = readCities()
   change = 0
 
   for tid,tname in re.findall(pattern,response.text):
-    response = requests.request('GET','https://evergore.de/'+world+'?page=info_town&town_id='+str(tid),headers=HDRS,allow_redirects=False)
-    if not world in tdata.keys():
+    response = eg.get_from_eg(eg.link, params={"page": "info_town", "town_id": str(tid)})
+    if not eg.world in tdata.keys():
       X,Y = splitCoord(re.search("page=map&[^>]*>(\d+:\d+)</a>", response.content.decode('utf-8')).group(1))
-      tdata[world] = {}
-      tdata[world][tname] = {"id":tid,"X":X,"Y":Y}
+      tdata[eg.world] = {}
+      tdata[eg.world][tname] = {"id":tid,"X":X,"Y":Y}
       change = 1
-    elif not tname in tdata[world].keys():
+    elif not tname in tdata[eg.world].keys():
       X,Y = splitCoord(re.search("page=map&[^>]*>(\d+:\d+)</a>", response.content.decode('utf-8')).group(1))
-      tdata[world][tname] = {"id":tid,"X":X,"Y":Y}
+      tdata[eg.world][tname] = {"id":tid,"X":X,"Y":Y}
       change = 1
   if change:
+    printVerbose("Änderungen in Städten, speichere", verbose)
     saveCities(tdata)
+  else:
+    printVerbose("Keine Änderungen in Städten, Beende", verbose)
 
   return True
 
