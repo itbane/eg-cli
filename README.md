@@ -42,7 +42,7 @@ Anschließend können die Wege berechnet werden:
 ~~~bash
 $ ./eg-cli.py --login RoutePlaner -s "Draga Sol" -t "Dur Celusse" -l
 User: <user>
-Password: 
+Password:
 53:72
 43:58
 42:56
@@ -57,3 +57,5 @@ Password:
 Vielen Dank an das Evergore-Team für das großartige Spiel.
 
 Vielen Dank an DonPaulus, von dessen [EG Routenplaner](egroutenplaner.bplaced.net) dieses Tool inspiriert wurde und dessen Implentierung des Dijkstra-Algorithmus verwendet wird.
+
+

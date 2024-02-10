@@ -1,5 +1,6 @@
 __pycache__
 cities.json
 lib/__pycache__
+data/
 .config
 .cache
