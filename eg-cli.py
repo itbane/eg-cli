@@ -3,6 +3,7 @@ import argparse
 import sys
 import getpass
 import json
+import os
 
 sys.path.append("./lib")
 from util import *
@@ -10,6 +11,7 @@ import BattleFinder
 import BattleParser
 import RoutePlaner
 import PullCities
+import StartBattle
 
 parser = argparse.ArgumentParser(description='find Evergore Battle')
 
@@ -28,6 +30,7 @@ bfParser = subparser.add_parser('BattleFinder')
 bpParser = subparser.add_parser('BattleParser')
 rpParser = subparser.add_parser('RoutePlaner')
 pcParser = subparser.add_parser('PullCities')
+sbParser = subparser.add_parser('StartBattle')
 
 # battleFinder args
 bfParser.add_argument('-l', '--lower-id', metavar='<lower-battleid>', help='the lower bound of battle IDs that should be looked at', dest='ll', type=int, required=True)
@@ -47,6 +50,9 @@ bpParser.add_argument('--id', metavar='<battleid>', help='The Battle ID to be an
 bpParser.add_argument('--report',metavar='<reportid>',help='The Message ID of the group to be analysed', dest='msgid',type=int)
 bpParser.add_argument('--print',help='If the result should be printed', dest='print', action='store_true')
 bpParser.add_argument('--filter',metavar='<feld>[,<feld>]',help='Comma-separated list of Fields to print', dest='filter', type=str,default="")
+
+# StartParser
+# sbParser
 
 args = parser.parse_args()
 
@@ -85,3 +91,10 @@ elif args.command == 'BattleParser':
         print("Need either '--msgid' or '--id'")
     if args.print:
         printBattleStats(res,args.filter.split(','))
+elif args.command == "StartBattle":
+    printVerbose("Running StartBattle", args.verbose)
+
+    if StartBattle.start_horde_battle(args.world, 50, args.verbose):
+        os.sys.exit(0)
+    else:
+        os.sys.exit(1)
