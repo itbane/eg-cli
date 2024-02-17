@@ -8,8 +8,18 @@ def get_arguments():
     """
     subarguments = {
         "--category": { "metavar": "<item-category>", "help": "Kategorie der Gegenstände. für die Baupläne "
-                       "heruntergeladen werden", "dest": "item_category", "type": str, "choices": [ "schwere-rüstung" ],
-                       "default": "schwere-rüstung" }
+                       "heruntergeladen werden", "dest": "item_category", "type": str, "default": "Schwere-Rüstungen",
+                       "choices": [
+                            "Steinverarbeitung", "Erzverarbeitung", "Stoff-und-Lederverarbeitung", "Konstruktion",
+                            "Schwerter", "Dolche", "Äxte", "Keulen", "Stangenwaffen", "Leichte-Rüstungen",
+                            "Schwere-Rüstungen", "Magiestäbe", "Bögen", "Armbrüste", "Schneidern-Leichte-Rüstungen",
+                            "Alchemie", "Holzverarbeitung"
+                       ]
+                      },
+        "--get-categories": {
+                                "help": "Exportiert die verfügbaren Kategorien in der Akademie im JSON Format",
+                                "dest": "get_categories", "action": "store_true"
+                            }
     }
     return "PullRecipes", subarguments
 
@@ -27,6 +37,28 @@ class PullRecipes():
     def __init__(self, eg):
         self.eg = eg
 
+    def get_category_mapping(self):
+        """
+        Retrieve all the categories in the academy
+        """
+        params = {"page":"academy_craft"}
+#        print(self.eg.get_from_eg(self.eg.link, params=params).text)
+        academy_page = self.eg.get_from_eg(self.eg.link, params=params)
+        craft_lines = re.search(r'Auswahl des Handwerks.*?</tbody>',
+                                academy_page.text, re.DOTALL)
+        categories = {}
+        for category in re.findall(r'<a href=".*?selection=(\d+).*?>([^<]*)</a>', craft_lines.group(0), re.DOTALL):
+            categories[category[1]] = category[0]
+
+        # this list is missing the default category -> we need to get another page and do everything again
+        params = {"page":"academy_craft", "selection": list(categories.values())[0]}
+        academy_page = self.eg.get_from_eg(self.eg.link, params=params)
+        craft_lines = re.search(r'Auswahl des Handwerks.*?</tbody>',
+                                academy_page.text, re.DOTALL)
+        for category in re.findall(r'<a href=".*?selection=(\d+).*?>([^<]*)</a>', craft_lines.group(0), re.DOTALL):
+            categories[category[1]] = category[0]
+        return categories
+
     def get_recipes(self, cat):
         """
         Retrieve a list of all recipes of a specified category.
@@ -35,7 +67,23 @@ class PullRecipes():
             - "Schmieden (Schwere Rüstungen): schwere-rüstung"
         """
         cat_map = {
-            "schwere-rüstung": 62
+            "Steinverarbeitung": "52",
+            "Erzverarbeitung": "53",
+            "Stoff-und-Lederverarbeitung": "54",
+            "Konstruktion": "55",
+            "Schwerter": "56",
+            "Dolche": "57",
+            "Äxte": "58",
+            "Keulen": "59",
+            "Stangenwaffen": "60",
+            "Leichte-Rüstungen": "61",
+            "Schwere-Rüstungen": "62",
+            "Magiestäbe": "63",
+            "Bögen": "64",
+            "Armbrüste": "65",
+            "Schneidern-Leichte-Rüstungen": "66",
+            "Alchemie": "67",
+            "Holzverarbeitung": "51"
         }
         params = {
             "page": "academy_craft",

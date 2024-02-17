@@ -135,9 +135,12 @@ def guild_storage(eg, args):
 def pull_recipes(eg, args):
     printVerbose("Running PullRecipes", args.verbose)
     pr = PullRecipes.PullRecipes(eg)
-    recipes = pr.get_recipes(args.item_category)
-    save_json(recipes, filename="data/recipes_{}_{}.json".format(eg.world, args.item_category))
-    print("Itemlist wurde in {} abgelegt.".format("data/recipes_{}_{}.json".format(eg.world, args.item_category)))
+    if args.get_categories:
+        print(json.dumps(pr.get_category_mapping()))
+    else:
+        recipes = pr.get_recipes(args.item_category)
+        save_json(recipes, filename="data/recipes_{}_{}.json".format(eg.world, args.item_category))
+        print("Itemlist wurde in {} abgelegt.".format("data/recipes_{}_{}.json".format(eg.world, args.item_category)))
 
 if __name__ == "__main__":
     try:
