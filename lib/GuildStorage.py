@@ -33,15 +33,15 @@ def get_full_item_list(cat):
                      "Ätherfäden", "Äthertuch", "Drachenhaut", "Drachenleder", "Sternenstaub"
                     ],
         "schwere-rüstung": [ "Kupfer-Kettenhaube", "Kupfer-Kettenhemd", "Kupfer-Kettenhandschuhe", "Kupfer-Kettenbeinlinge", "Kupfer-Kettenstiefel",
-                             "Kupfer-Plattenhelm", "Kupfer-Plattenpanzer", "Kupfer-Plattenhandschuhe", "Kupfer-Plattenbeinline", "Kupfer-Plattenstiefel",
+                             "Kupfer-Plattenhelm", "Kupfer-Plattenpanzer", "Kupfer-Plattenhandschuhe", "Kupfer-Plattenbeinlinge", "Kupfer-Plattenstiefel",
                              "Eisen-Kettenhaube", "Eisen-Kettenhemd", "Eisen-Kettenhandschuhe", "Eisen-Kettenbeinlinge", "Eisen-Kettenstiefel",
-                             "Eisen-Plattenhelm", "Eisen-Plattenpanzer", "Eisen-Plattenhandschuhe", "Eisen-Plattenbeinline", "Eisen-Plattenstiefel",
+                             "Eisen-Plattenhelm", "Eisen-Plattenpanzer", "Eisen-Plattenhandschuhe", "Eisen-Plattenbeinlinge", "Eisen-Plattenstiefel",
                              "Sorandil-Kettenhaube", "Sorandil-Kettenhemd", "Sorandil-Kettenhandschuhe", "Sorandil-Kettenbeinlinge", "Sorandil-Kettenstiefel",
-                             "Sorandil-Plattenhelm", "Sorandil-Plattenpanzer", "Sorandil-Plattenhandschuhe", "Sorandil-Plattenbeinline", "Sorandil-Plattenstiefel",
+                             "Sorandil-Plattenhelm", "Sorandil-Plattenpanzer", "Sorandil-Plattenhandschuhe", "Sorandil-Plattenbeinlinge", "Sorandil-Plattenstiefel",
                              "Adamant-Kettenhaube", "Adamant-Kettenhemd", "Adamant-Kettenhandschuhe", "Adamant-Kettenbeinlinge", "Adamant-Kettenstiefel",
-                             "Adamant-Plattenhelm", "Adamant-Plattenpanzer", "Adamant-Plattenhandschuhe",  "Adamant-Plattenbeinline", "Adamant-Plattenstiefel",
+                             "Adamant-Plattenhelm", "Adamant-Plattenpanzer", "Adamant-Plattenhandschuhe",  "Adamant-Plattenbeinlinge", "Adamant-Plattenstiefel",
                              "Mithril-Kettenhaube", "Mithril-Kettenhemd", "Mithril-Kettenhandschuhe", "Mithril-Kettenbeinlinge", "Mithril-Kettenstiefel",
-                             "Mithril-Plattenhelm", "Mithril-Plattenpanzer", "Mithril-Plattenhandschuhe", "Mithril-Plattenbeinline", "Mithril-Plattenstiefel"
+                             "Mithril-Plattenhelm", "Mithril-Plattenpanzer", "Mithril-Plattenhandschuhe", "Mithril-Plattenbeinlinge", "Mithril-Plattenstiefel"
                             ],
         "handwerksmaterial": [ "Schmiedeöl", "Bogensalbe", "Harz", "Zwirn", "Steinkohle", "Nähgarn", "Lederfett", "Magiesplitter", "Federn", "Salz", "Mörtel",
                               "Schleifstein", "Elbenhaar", "Wattierung", "Granitharz", "Glaszwirn", "Drachenzunder", "Schutzpolster", "Ledernieten", "Phasenkraut",
