@@ -1,0 +1,52 @@
+{
+    "5 Buchenbretter": [
+        {
+            "count": "5",
+            "name": "Buchenholz"
+        },
+        {
+            "count": "1",
+            "name": "Harz"
+        }
+    ],
+    "5 Birkenbretter": [
+        {
+            "count": "5",
+            "name": "Birkenholz"
+        },
+        {
+            "count": "2",
+            "name": "Harz"
+        }
+    ],
+    "5 Eichenbretter": [
+        {
+            "count": "5",
+            "name": "Eichenholz"
+        },
+        {
+            "count": "2",
+            "name": "Granitharz"
+        }
+    ],
+    "5 Eschenbretter": [
+        {
+            "count": "5",
+            "name": "Eschenholz"
+        },
+        {
+            "count": "3",
+            "name": "Granitharz"
+        }
+    ],
+    "5 Eibenbretter": [
+        {
+            "count": "5",
+            "name": "Eibenholz"
+        },
+        {
+            "count": "4",
+            "name": "Granitharz"
+        }
+    ]
+}
