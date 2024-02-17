@@ -5,11 +5,13 @@ from EgCli.util import *
 def get_arguments():
     subarguments = {
         "--category": { "metavar": "<item_category>", "help": 'Kategorie der Gegenstände, die überprüft werden sollen',
-                       "dest": "item_category", "type": str, "choices": ["schwere-rüstung","handwerksmaterial", "bauteile", "rohstoffe"],
+                       "dest": "item_category", "type": str, "choices": ["schwere-rüstung","handwerksmaterial",
+                                                                         "bauteile", "rohstoffe"],
                        "default": "handwerksmaterial" },
-        "--count-broken": { "action": "store_true", "help": "Auch nicht pristine Gegenstände einbeziehen", "dest": "use_broken" },
-        "--wanted-minimum": { "metavar": "<amount>", "help": "Mindestanzahl Gegenstände, die vorhanden sein sollen", "dest": "wanted_minimum",
-                             "type": int },
+        "--count-broken": { "action": "store_true", "help": "Auch nicht pristine Gegenstände einbeziehen",
+                           "dest": "use_broken" },
+        "--wanted-minimum": { "metavar": "<amount>", "help": "Mindestanzahl Gegenstände, die vorhanden sein sollen",
+                             "dest": "wanted_minimum", "type": int },
         "--list": { "action": "store_true", "help": "Alle Gegenstände listen", "dest": "list_items" },
     }
     return "GuildStorage", subarguments
@@ -86,21 +88,17 @@ class GuildStorage():
         item_list = {}
         abort = 0
         while next_page:
-            items_page = self.eg.get_from_eg(self.eg.link, params={"page":"stock_out", "selection":cat_map[cat], "pos":next_page})
-            if res := re.search(r'<(font class="[^"]*"|a href=[^>]*)>&lt;&lt;</(font|a)>\s*\d+\s*bis\s*(\d+)\s*<(font class="[^"]*"|a href=[^>]*)>&gt;&gt;</(a|font)>\s*\(Gesamt: (\d+)\)</th>', items_page.text):
-                # print("{} vs {}".format(res.group(3), res.group(6)))
+            items_page = self.eg.get_from_eg(self.eg.link, params={"page":"stock_out", "selection":cat_map[cat],
+                                                                   "pos":next_page})
+            if res := re.search(r'<(font class="[^"]*"|a href=[^>]*)>&lt;&lt;</(font|a)>\s*\d+\s*bis\s*(\d+)\s*<('
+                                'font class="[^"]*"|a href=[^>]*)>&gt;&gt;</(a|font)>\s*\(Gesamt: (\d+)\)</th>',
+                                items_page.text):
+
                 if res.group(3) == res.group(6):
                     next_page = False
                 else:
                     next_page = re.search(r'pos=(\d+)"', res.group(4)).group(1)
-                    # print(re.search(r'<input type="hidden" name="pos" value="(\d+)">', items_page.text).group(1))
             else:
-                # print("Fehler")
-                # print("URL: {}".format(self.eg.link))
-                # print("Parameter:")
-                # print("  pos: {}".format(next_page))
-                # print("")
-                # print(items_page.text)
                 os.sys.exit(0)
 
             for i in re.finditer("<b>(<font[^>]*>)?([^ ]*) ([^<]*)(</font>)?</b>\s*(\((\d+)\))?",items_page.text):
