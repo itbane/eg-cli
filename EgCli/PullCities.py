@@ -1,7 +1,7 @@
 import requests
 import re
 
-from util import *
+from EgCli.util import *
 
 def getCities(eg, verbose):
   printVerbose('Pulling cities for '+eg.world,verbose)
@@ -24,7 +24,7 @@ def getCities(eg, verbose):
       change = 1
   if change:
     printVerbose("Änderungen in Städten, speichere", verbose)
-    saveCities(tdata)
+    save_json(tdata)
   else:
     printVerbose("Keine Änderungen in Städten, Beende", verbose)
 

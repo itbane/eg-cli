@@ -1,7 +1,7 @@
 import re
 import requests
 
-from util import *
+from EgCli.util import *
 
 def start_horde_battle(eg, min_ap, verbose):
     data = {

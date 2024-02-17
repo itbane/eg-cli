@@ -3,7 +3,7 @@ import sys
 import requests
 import re
 import getpass
-from util import *
+from EgCli.util import *
 
 def findBattleIDs(world,verbose,player,ll,ul,first):
   printVerbose("looking for battles on "+world,verbose)

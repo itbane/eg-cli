@@ -1,6 +1,6 @@
 import os
 import requests
-from util import *
+from EgCli.util import *
 
 def get_arguments():
     subarguments = {
@@ -19,33 +19,42 @@ def get_function():
 
 def get_full_item_list(cat):
     item_list = {
-        "bauteile": [ "Kalk-Mauerstück", "Kalk-Bodenplatte", "Buchen-Dachkonstrukt", "Buchen-Stützbalken", "Sand-Mauerstück", "Sand-Bodenplatte",
-                     "Birken-Dachkonstrukt", "Birken-Stützbalken", "Schiefer-Mauerstück", "Schiefer-Bodenplatte", "Eichen-Dachkonstrukt",
-                     "Eichen-Stützbalken", "Granit-Mauerstück", "Granit-Bodenplatte", "Eschen-Dachkonstrukt", "Eschen-Stützbalken",
+        "bauteile": [ "Kalk-Mauerstück", "Kalk-Bodenplatte", "Buchen-Dachkonstrukt", "Buchen-Stützbalken",
+                     "Sand-Mauerstück", "Sand-Bodenplatte", "Birken-Dachkonstrukt", "Birken-Stützbalken",
+                     "Schiefer-Mauerstück", "Schiefer-Bodenplatte", "Eichen-Dachkonstrukt", "Eichen-Stützbalken",
+                     "Granit-Mauerstück", "Granit-Bodenplatte", "Eschen-Dachkonstrukt", "Eschen-Stützbalken",
                      "Marmor-Mauerstück", "Marmor-Bodenplatte", "Eiben-Dachkonstrukt", "Eiben-Stützbalken"
                     ],
-        "rohstoffe":[ "Kupfererz", "Kupferbarren", "Kalkstein", "Kalkziegel", "Buchenholz", "Buchenbretter", "Leinen", "Leinentuch",
-                     "Weichpelze", "Weichleder", "Magiestaub", "Eisenerz", "Eisenbarren", "Sandstein", "Sandziegel", "Birkenholz",
-                     "Birkenbretter", "Wolle", "Wolltuch", "Pelze", "Leder", "Todesstaub", "Sorandilerz", "Sorandilbarren", "Schiefer",
-                     "Schieferziegel", "Eichenholz", "Eichenbretter", "Baumwolle", "Baumwolltuch", "Hartpelz", "Hartleder", "Schattenstaub",
-                     "Adamanterz", "Adamantbarren", "Granit", "Granitziegel", "Eschenholz", "Eschenbretter", "Seide", "Seidentuch",
-                     "Riesenhaut", "Riesenleder", "Mondstaub", "Mithrilerz", "Mithrilbarren", "Marmor", "Marmorziegel", "Eibenholz", "Eibenbretter",
-                     "Ätherfäden", "Äthertuch", "Drachenhaut", "Drachenleder", "Sternenstaub"
+        "rohstoffe":[ "Kupfererz", "Kupferbarren", "Kalkstein", "Kalkziegel", "Buchenholz", "Buchenbretter", "Leinen",
+                     "Leinentuch", "Weichpelze", "Weichleder", "Magiestaub", "Eisenerz", "Eisenbarren", "Sandstein",
+                     "Sandziegel", "Birkenholz", "Birkenbretter", "Wolle", "Wolltuch", "Pelze", "Leder", "Todesstaub",
+                     "Sorandilerz", "Sorandilbarren", "Schiefer", "Schieferziegel", "Eichenholz", "Eichenbretter",
+                     "Baumwolle", "Baumwolltuch", "Hartpelz", "Hartleder", "Schattenstaub", "Adamanterz",
+                     "Adamantbarren", "Granit", "Granitziegel", "Eschenholz", "Eschenbretter", "Seide", "Seidentuch",
+                     "Riesenhaut", "Riesenleder", "Mondstaub", "Mithrilerz", "Mithrilbarren", "Marmor", "Marmorziegel",
+                     "Eibenholz", "Eibenbretter", "Ätherfäden", "Äthertuch", "Drachenhaut", "Drachenleder",
+                     "Sternenstaub"
                     ],
-        "schwere-rüstung": [ "Kupfer-Kettenhaube", "Kupfer-Kettenhemd", "Kupfer-Kettenhandschuhe", "Kupfer-Kettenbeinlinge", "Kupfer-Kettenstiefel",
-                             "Kupfer-Plattenhelm", "Kupfer-Plattenpanzer", "Kupfer-Plattenhandschuhe", "Kupfer-Plattenbeinlinge", "Kupfer-Plattenstiefel",
-                             "Eisen-Kettenhaube", "Eisen-Kettenhemd", "Eisen-Kettenhandschuhe", "Eisen-Kettenbeinlinge", "Eisen-Kettenstiefel",
-                             "Eisen-Plattenhelm", "Eisen-Plattenpanzer", "Eisen-Plattenhandschuhe", "Eisen-Plattenbeinlinge", "Eisen-Plattenstiefel",
-                             "Sorandil-Kettenhaube", "Sorandil-Kettenhemd", "Sorandil-Kettenhandschuhe", "Sorandil-Kettenbeinlinge", "Sorandil-Kettenstiefel",
-                             "Sorandil-Plattenhelm", "Sorandil-Plattenpanzer", "Sorandil-Plattenhandschuhe", "Sorandil-Plattenbeinlinge", "Sorandil-Plattenstiefel",
-                             "Adamant-Kettenhaube", "Adamant-Kettenhemd", "Adamant-Kettenhandschuhe", "Adamant-Kettenbeinlinge", "Adamant-Kettenstiefel",
-                             "Adamant-Plattenhelm", "Adamant-Plattenpanzer", "Adamant-Plattenhandschuhe",  "Adamant-Plattenbeinlinge", "Adamant-Plattenstiefel",
-                             "Mithril-Kettenhaube", "Mithril-Kettenhemd", "Mithril-Kettenhandschuhe", "Mithril-Kettenbeinlinge", "Mithril-Kettenstiefel",
-                             "Mithril-Plattenhelm", "Mithril-Plattenpanzer", "Mithril-Plattenhandschuhe", "Mithril-Plattenbeinlinge", "Mithril-Plattenstiefel"
+        "schwere-rüstung": [
+            "Kupfer-Kettenhaube", "Kupfer-Kettenhemd", "Kupfer-Kettenhandschuhe", "Kupfer-Kettenbeinlinge",
+            "Kupfer-Kettenstiefel", "Kupfer-Plattenhelm", "Kupfer-Plattenpanzer", "Kupfer-Plattenhandschuhe",
+            "Kupfer-Plattenbeinlinge", "Kupfer-Plattenstiefel", "Eisen-Kettenhaube", "Eisen-Kettenhemd",
+            "Eisen-Kettenhandschuhe", "Eisen-Kettenbeinlinge", "Eisen-Kettenstiefel", "Eisen-Plattenhelm",
+            "Eisen-Plattenpanzer", "Eisen-Plattenhandschuhe", "Eisen-Plattenbeinlinge", "Eisen-Plattenstiefel",
+            "Sorandil-Kettenhaube", "Sorandil-Kettenhemd", "Sorandil-Kettenhandschuhe", "Sorandil-Kettenbeinlinge",
+            "Sorandil-Kettenstiefel", "Sorandil-Plattenhelm", "Sorandil-Plattenpanzer", "Sorandil-Plattenhandschuhe",
+            "Sorandil-Plattenbeinlinge", "Sorandil-Plattenstiefel", "Adamant-Kettenhaube", "Adamant-Kettenhemd",
+            "Adamant-Kettenhandschuhe", "Adamant-Kettenbeinlinge", "Adamant-Kettenstiefel", "Adamant-Plattenhelm",
+            "Adamant-Plattenpanzer", "Adamant-Plattenhandschuhe",  "Adamant-Plattenbeinlinge", "Adamant-Plattenstiefel",
+            "Mithril-Kettenhaube", "Mithril-Kettenhemd", "Mithril-Kettenhandschuhe", "Mithril-Kettenbeinlinge",
+            "Mithril-Kettenstiefel", "Mithril-Plattenhelm", "Mithril-Plattenpanzer", "Mithril-Plattenhandschuhe",
+            "Mithril-Plattenbeinlinge", "Mithril-Plattenstiefel"
                             ],
-        "handwerksmaterial": [ "Schmiedeöl", "Bogensalbe", "Harz", "Zwirn", "Steinkohle", "Nähgarn", "Lederfett", "Magiesplitter", "Federn", "Salz", "Mörtel",
-                              "Schleifstein", "Elbenhaar", "Wattierung", "Granitharz", "Glaszwirn", "Drachenzunder", "Schutzpolster", "Ledernieten", "Phasenkraut",
-                              "Pfeilharz", "Kristallat", "Edelmörtel", "Griffband", "Nieten", "Vulkandraht", "Beschläge", "Erdenblut", "Drachinschneiden"
+        "handwerksmaterial": [
+            "Schmiedeöl", "Bogensalbe", "Harz", "Zwirn", "Steinkohle", "Nähgarn", "Lederfett", "Magiesplitter",
+            "Federn", "Salz", "Mörtel", "Schleifstein", "Elbenhaar", "Wattierung", "Granitharz", "Glaszwirn",
+            "Drachenzunder", "Schutzpolster", "Ledernieten", "Phasenkraut", "Pfeilharz", "Kristallat", "Edelmörtel",
+            "Griffband", "Nieten", "Vulkandraht", "Beschläge", "Erdenblut", "Drachinschneiden"
                              ]
     }
     return item_list[cat]

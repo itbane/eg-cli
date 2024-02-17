@@ -4,15 +4,16 @@ import sys
 import getpass
 import json
 import os
+import inspect
 
-sys.path.append("./lib")
-from util import *
-import BattleFinder
-import BattleParser
-import RoutePlaner
-import PullCities
-import StartBattle
-import GuildStorage
+from EgCli.util import *
+import EgCli.BattleFinder as BattleFinder
+import EgCli.BattleParser as BattleParser
+import EgCli.RoutePlaner as RoutePlaner
+import EgCli.PullCities as PullCities
+import EgCli.StartBattle as StartBattle
+import EgCli.GuildStorage as GuildStorage
+import EgCli.PullRecipes as PullRecipes
 
 def get_arguments(parser_data):
     parser = argparse.ArgumentParser(description='find Evergore Battle')
@@ -66,7 +67,9 @@ def get_arguments(parser_data):
 
 def main():
     parser_data = {}
+
     parser_name, sub_arguments = GuildStorage.get_arguments()
+    parser_name, sub_arguments = PullRecipes.get_arguments()
     parser_data[parser_name] = sub_arguments
     args = get_arguments(parser_data)
 
@@ -76,7 +79,8 @@ def main():
         "PullCities": pull_cities,
         "RoutePlaner": route_planer,
         "BattleParser": battle_parser,
-        "StartBattle":start_battle
+        "StartBattle":start_battle,
+        "PullRecipes": pull_recipes
     }
 
     eg = EvergoreClient(args.world, login=args.login, cookie=args.cookie)
@@ -127,6 +131,13 @@ def guild_storage(eg, args):
     elif args.list_items:
         for item, amount in items.items():
             print("{}: {}".format(item, args.wanted_minimum))
+
+def pull_recipes(eg, args):
+    printVerbose("Running PullRecipes", args.verbose)
+    pr = PullRecipes.PullRecipes(eg)
+    recipes = pr.get_recipes(args.item_category)
+    save_json(recipes, filename="data/recipes_{}_{}.json".format(eg.world, args.item_category))
+    print("Itemlist wurde in {} abgelegt.".format("data/recipes_{}_{}.json".format(eg.world, args.item_category)))
 
 if __name__ == "__main__":
     try:

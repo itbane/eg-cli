@@ -4,7 +4,8 @@ import argparse
 import sys
 import json
 
-from exceptions import *
+from EgCli.exceptions import *
+
 def readCredentials(verbose):
   printVerbose("Loging in",verbose)
   user=input("User: ")
@@ -37,7 +38,7 @@ def readCities(filename='cities.json'):
         return {}
     return data
 
-def saveCities(data,filename='cities.json'):
+def save_json(data,filename='cities.json'):
     with open(filename,'w',encoding='utf-8') as f:
         json.dump(data,f,ensure_ascii=False, indent=4)
 

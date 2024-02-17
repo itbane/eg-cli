@@ -2,7 +2,7 @@ import sys
 import requests
 import re
 import getpass
-from util import *
+from EgCli.util import *
 
 def getTeamSide(nr):
     if int(nr) == 1:

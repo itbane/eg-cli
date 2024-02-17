@@ -1,7 +1,7 @@
-import dijkstra
+import EgCli.dijkstra
 import datetime
 import json
-from util import *
+from EgCli.util import *
 
 def readCache():
   try:
