@@ -66,9 +66,9 @@ class Recipes():
                 os.sys.exit(0)
             for i in ingredients:
                 try:
-                    wanted_ingredients[i["name"]] += int(i["count"])
+                    wanted_ingredients[i["name"]] += int(i["count"])*int(count)
                 except KeyError:
-                    wanted_ingredients[i["name"]] = int(i["count"])
+                    wanted_ingredients[i["name"]] = int(i["count"])*int(count)
 
         return wanted_ingredients
 
