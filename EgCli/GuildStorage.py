@@ -1,5 +1,4 @@
 import os
-import requests
 from EgCli.util import *
 
 def get_arguments():
@@ -19,7 +18,7 @@ def get_arguments():
 def get_function():
     return GuildStorage.do_stuff
 
-def get_full_item_list(cat):
+def get_full_item_list(cat=None):
     item_list = {
         "bauteile": [ "Kalk-Mauerstück", "Kalk-Bodenplatte", "Buchen-Dachkonstrukt", "Buchen-Stützbalken",
                      "Sand-Mauerstück", "Sand-Bodenplatte", "Birken-Dachkonstrukt", "Birken-Stützbalken",
@@ -59,12 +58,21 @@ def get_full_item_list(cat):
             "Griffband", "Nieten", "Vulkandraht", "Beschläge", "Erdenblut", "Drachinschneiden"
                              ]
     }
-    return item_list[cat]
+    if cat is not None:
+        return item_list[cat]
+    return item_list
 
 class GuildStorage():
     def __init__(self, eg):
         self.eg = eg
         self.name, self.id = self.__get_guild_name()
+        self.full_item_list = get_full_item_list(cat=None)
+        self.cat_map = {
+            "handwerksmaterial": 32,
+            "schwere-rüstung": 23,
+            "rohstoffe": 31,
+            "bauteile": 33
+        }
 
     def __get_guild_name(self):
         hero_page = self.eg.get_from_eg(self.eg.link, params={"page": "info_hero"})
@@ -78,17 +86,11 @@ class GuildStorage():
         return regex_result.groups(2), regex_result.group(1)
 
     def list_items(self, cat, count_broken):
-        cat_map = {
-            "handwerksmaterial": 32,
-            "schwere-rüstung": 23,
-            "rohstoffe": 31,
-            "bauteile": 33
-        }
         next_page = 1
         item_list = {}
         abort = 0
         while next_page:
-            items_page = self.eg.get_from_eg(self.eg.link, params={"page":"stock_out", "selection":cat_map[cat],
+            items_page = self.eg.get_from_eg(self.eg.link, params={"page":"stock_out", "selection": self.cat_map[cat],
                                                                    "pos":next_page})
             if res := re.search(r'<(font class="[^"]*"|a href=[^>]*)>&lt;&lt;</(font|a)>\s*\d+\s*bis\s*(\d+)\s*<('
                                 'font class="[^"]*"|a href=[^>]*)>&gt;&gt;</(a|font)>\s*\(Gesamt: (\d+)\)</th>',
@@ -130,3 +132,54 @@ class GuildStorage():
         # print(items_page.text)
         # print("Nächste Seite: {}".format(next_page))
         return item_list
+
+    def get_item_from_storage(self, item, amount):
+        """
+        Get a specific item from guild storage
+        """
+        # use search function to find items
+        params = {
+            "page": "stock_out_search"
+        }
+        data = {
+            "search": item
+        }
+        response = self.eg.post_to_eg(self.eg.link, params=params, data=data)
+        result_table = re.search(r'Ergebnisse</th>.*?</tbody>', response.text, re.DOTALL)
+        found_items = re.findall(r'<tr>.*?<td><input type="number".*?</tr>', result_table.group(0), re.DOTALL)
+        data = {}
+        for found_item in found_items:
+            info = re.search(r'type="number" name="([^"]*?)".*?<b>(\d+)\s+(.*?)</b>', found_item, re.DOTALL)
+            if info.group(3) == item:
+                # item matches exactly
+                if int(info.group(2)) >= amount:
+                    data[info.group(1)] = amount
+
+        # data should be complete
+        if not data:
+            raise ValueError("Nicht genug {} im Gildenlager gefunden".format(item))
+
+        params = {
+            "page": "stock_out_page",
+            "action": "stock_out",
+            "search": item
+        }
+        retrieve_result = self.eg.post_to_eg(self.eg.link, params=params, data=data)
+        print(retrieve_result.text)
+        return True
+
+    def __get_category_of_item(self, item):
+        for cat,recipes in self.full_item_list.items():
+            if item in recipes:
+                return cat
+        raise KeyError
+
+    def get_items_from_storage(self, items):
+        """
+        Take items from guild storage, if possible
+        """
+        for item, amount in items.items():
+            try:
+                self.get_item_from_storage(item, amount)
+            except ValueError as e:
+                print(e)

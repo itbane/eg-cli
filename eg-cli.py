@@ -14,6 +14,7 @@ import EgCli.PullCities as PullCities
 import EgCli.StartBattle as StartBattle
 import EgCli.GuildStorage as GuildStorage
 import EgCli.PullRecipes as PullRecipes
+import EgCli.Recipes as Recipes
 
 def get_arguments(parser_data):
     parser = argparse.ArgumentParser(description='find Evergore Battle')
@@ -67,10 +68,15 @@ def get_arguments(parser_data):
 
 def main():
     parser_data = {}
+    plugin_list = [
+        GuildStorage,
+        PullRecipes,
+        Recipes
+    ]
+    for plugin in plugin_list:
+        parser_name, sub_arguments = plugin.get_arguments()
+        parser_data[parser_name] = sub_arguments
 
-    parser_name, sub_arguments = GuildStorage.get_arguments()
-    parser_name, sub_arguments = PullRecipes.get_arguments()
-    parser_data[parser_name] = sub_arguments
     args = get_arguments(parser_data)
 
     todo_functions = {
@@ -80,7 +86,8 @@ def main():
         "RoutePlaner": route_planer,
         "BattleParser": battle_parser,
         "StartBattle":start_battle,
-        "PullRecipes": pull_recipes
+        "PullRecipes": pull_recipes,
+        "Recipes": recipes
     }
 
     eg = EvergoreClient(args.world, login=args.login, cookie=args.cookie)
@@ -142,9 +149,21 @@ def pull_recipes(eg, args):
         save_json(recipes, filename="data/recipes_{}_{}.json".format(eg.world, args.item_category))
         print("Itemlist wurde in {} abgelegt.".format("data/recipes_{}_{}.json".format(eg.world, args.item_category)))
 
+def recipes(eg, args):
+    printVerbose("Running Recipes", args.verbose)
+    r = Recipes.Recipes(eg)
+    ingredients = r.calculate_ingredients(args.recipe_list)
+    print(json.dumps(ingredients))
+    if args.get_from_guild_storage:
+        gs = GuildStorage.GuildStorage(eg)
+        gs.get_items_from_storage(ingredients)
 if __name__ == "__main__":
     try:
         main()
     except KeyboardInterrupt:
         print("Aborted")
         os.sys.exit(0)
+    except NotImplementedError as e:
+        print("Fehler: {}".format(e))
+    except argparse.ArgumentTypeError as e:
+        print("Fehler: {}".format(e))
