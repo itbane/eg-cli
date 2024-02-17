@@ -165,7 +165,7 @@ class GuildStorage():
             "search": item
         }
         retrieve_result = self.eg.post_to_eg(self.eg.link, params=params, data=data)
-        print(retrieve_result.text)
+
         return True
 
     def __get_category_of_item(self, item):
