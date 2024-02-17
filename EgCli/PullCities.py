@@ -8,7 +8,7 @@ def getCities(eg, verbose):
   response = eg.get_from_eg(eg.link, params={"page": "ranking_town"})
   pattern = re.compile(r'page=info_town&town_id=(\d+)">([^<]*)<')
 
-  tdata = readCities()
+  tdata = read_json()
   change = 0
 
   for tid,tname in re.findall(pattern,response.text):

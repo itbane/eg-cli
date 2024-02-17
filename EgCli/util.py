@@ -30,7 +30,7 @@ def egCoord(coord):
 def splitCoord(coords):
  return coords.split(':')[0],coords.split(':')[1]
 
-def readCities(filename='cities.json'):
+def read_json(filename='cities.json'):
     try:
         with open(filename) as f:
             data = json.load(f)
@@ -43,14 +43,14 @@ def save_json(data,filename='cities.json'):
         json.dump(data,f,ensure_ascii=False, indent=4)
 
 def getCityList(world):
-  cities = readCities()
+  cities = read_json()
   try:
     return list(cities[world].keys())
   except KeyError:
     return []
 
 def getCity(city):
-  cities = readCities()
+  cities = read_json()
   for world in cities.keys():
     try:
       return str(cities[world][city]['X'])+":"+str(cities[world][city]['Y'])
