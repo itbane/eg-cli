@@ -18,6 +18,8 @@ import EgCli.StartBattle as StartBattle
 import EgCli.GuildStorage as GuildStorage
 import EgCli.PullRecipes as PullRecipes
 import EgCli.Recipes as Recipes
+import EgCli.character as character
+
 
 def get_arguments(parser_data):
     parser = argparse.ArgumentParser(description='find Evergore Battle')
@@ -136,19 +138,57 @@ def guild_storage(eg, args):
     printVerbose("Running GuildStorage", args.verbose)
     gs = GuildStorage.GuildStorage(eg)
     items = gs.list_items(args.item_category, args.use_broken)
+    char = character.EvergoreCharacter(eg)
+    build_items = {}
 
     # print("Anzahl Items: {}".format(len(items)))
-    if args.wanted_minimum:
-        all_items = GuildStorage.get_full_item_list(args.item_category)
+    if args.wanted_minimum or args.create_itemlist:
+        all_items = char.get_available_recipes(args.item_category)
+        for num in range(1, args.wanted_minimum + 1):
+            build_items[num] = []
+
         for item in all_items:
             try:
                 if items[item] < args.wanted_minimum:
-                    print("{}: Need {} more!".format(item, args.wanted_minimum - items[item]))
+                    build_items[args.wanted_minimum - items[item]].append(item)
             except KeyError:
-                print("{}: Need {} more!".format(item, args.wanted_minimum))
+                build_items[args.wanted_minimum].append(item)
     elif args.list_items:
         for item, amount in items.items():
             print("{}: {}".format(item, args.wanted_minimum))
+        return True
+    if len(build_items) == 0:
+        print("Keine Objekte benötigt")
+        return True
+
+    if args.wanted_minimum and args.create_itemlist:
+        for count, items in reversed(build_items.items()):
+            for name in items:
+                print("{}: Need {} more!".format(name, count))
+    elif args.wanted_minimum and args.add_craftkits:
+        r = Recipes.Recipes(eg)
+        time_left = char.get_available_crafting_time()
+        recipes = {}
+        for count, items in reversed(build_items.items()):
+            for item in items:
+                printVerbose("looking at {}, wanting {}".format(item, count))
+                printVerbose("  Time left: {}".format(time_left))
+                printVerbose("  Time required: {}".format(r.get_recipe(item)["time"]))
+                if time_left > r.get_recipe(item)["time"]:
+                    time_left -= r.get_recipe(item)["time"]
+                    try:
+                        build_items[count-1].append(item)
+                    except KeyError:
+                        # Kein Item wird mehr benötigt
+                        pass
+                    try:
+                        recipes[item] += 1
+                    except KeyError:
+                        recipes[item] = 1
+
+        print("Zu bauende Gegenstände:")
+        print(recipes)
+        print("Übrige Zeit: {}".format(time_left))
 
 def pull_recipes(eg, args):
     printVerbose("Running PullRecipes", args.verbose)
@@ -168,6 +208,8 @@ def recipes(eg, args):
     if args.get_from_guild_storage:
         gs = GuildStorage.GuildStorage(eg)
         gs.get_items_from_storage(ingredients)
+
+
 if __name__ == "__main__":
     try:
         main()
