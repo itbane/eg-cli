@@ -6,6 +6,9 @@ import json
 import os
 import inspect
 
+from time import sleep
+import datetime
+
 from EgCli.util import *
 import EgCli.BattleFinder as BattleFinder
 import EgCli.BattleParser as BattleParser
@@ -62,6 +65,7 @@ def get_arguments(parser_data):
     bpParser.add_argument('--filter',metavar='<feld>[,<feld>]',help='Comma-separated list of Fields to print', dest='filter', type=str,default="")
 
     # StartParser
+    sbParser.add_argument('--forever', help='Keep fighting until APs are empty', action="store_true", dest="forever")
     # sbParser
 
     return parser.parse_args()
@@ -116,7 +120,14 @@ def battle_parser(args):
 def start_battle(eg, args):
     printVerbose("Running StartBattle", args.verbose)
 
-    if StartBattle.start_horde_battle(eg, 50, args.verbose):
+    if args.forever:
+        while True:
+            result = StartBattle.start_horde_battle(eg, 50, args.verbose)
+            if result in [ "too_few_ap", "no_enemy_group", "no_group_id", "battle_not_started" ]:
+                break
+            print("{}: Wait for 120 seconds".format(datetime.datetime.now()))
+            sleep(120)
+    elif StartBattle.start_horde_battle(eg, 50, args.verbose):
         os.sys.exit(0)
     else:
         os.sys.exit(1)
