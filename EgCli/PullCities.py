@@ -4,7 +4,7 @@ import re
 from EgCli.util import *
 
 def getCities(eg, verbose):
-  printVerbose('Pulling cities for '+eg.world,verbose)
+  print_verbose('Pulling cities for '+eg.world)
   response = eg.get_from_eg(eg.link, params={"page": "ranking_town"})
   pattern = re.compile(r'page=info_town&town_id=(\d+)">([^<]*)<')
 
@@ -23,10 +23,10 @@ def getCities(eg, verbose):
       tdata[eg.world][tname] = {"id":tid,"X":X,"Y":Y}
       change = 1
   if change:
-    printVerbose("Änderungen in Städten, speichere", verbose)
+    print_verbose("Änderungen in Städten, speichere")
     save_json(tdata)
   else:
-    printVerbose("Keine Änderungen in Städten, Beende", verbose)
+    print_verbose("Keine Änderungen in Städten, Beende")
 
   return True
 

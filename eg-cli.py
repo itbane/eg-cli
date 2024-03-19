@@ -84,6 +84,7 @@ def main():
         parser_data[parser_name] = sub_arguments
 
     args = get_arguments(parser_data)
+    set_verbosity(args.verbose)
 
     todo_functions = {
         "GuildStorage": guild_storage,
@@ -109,7 +110,7 @@ def route_planer(args):
       RoutePlaner.travel(args.source,args.target,args.verbose,args.add,args.list,args.create,args.world)
 
 def battle_parser(args):
-        printVerbose("Running BattleParser",args.verbose)
+        print_verbose("Running BattleParser")
         if args.battleid is not None:
             res = BattleParser.analyseBattle(args.world,args.battleid,args.verbose)
         elif args.msgid is not None:
@@ -120,7 +121,7 @@ def battle_parser(args):
             printBattleStats(res,args.filter.split(','))
 
 def start_battle(eg, args):
-    printVerbose("Running StartBattle", args.verbose)
+    print_verbose("Running StartBattle")
 
     if args.forever:
         while True:
@@ -135,7 +136,7 @@ def start_battle(eg, args):
         os.sys.exit(1)
 
 def guild_storage(eg, args):
-    printVerbose("Running GuildStorage", args.verbose)
+    print_verbose("Running GuildStorage")
     gs = GuildStorage.GuildStorage(eg)
     items = gs.list_items(args.item_category, args.use_broken)
     char = character.EvergoreCharacter(eg)
@@ -191,7 +192,7 @@ def guild_storage(eg, args):
         print("Übrige Zeit: {}".format(time_left))
 
 def pull_recipes(eg, args):
-    printVerbose("Running PullRecipes", args.verbose)
+    print_verbose("Running PullRecipes")
     pr = PullRecipes.PullRecipes(eg)
     if args.get_categories:
         print(json.dumps(pr.get_category_mapping()))
@@ -201,7 +202,7 @@ def pull_recipes(eg, args):
         print("Itemlist wurde in {} abgelegt.".format("data/recipes_{}_{}.json".format(eg.world, args.item_category)))
 
 def recipes(eg, args):
-    printVerbose("Running Recipes", args.verbose)
+    print_verbose("Running Recipes")
     r = Recipes.Recipes(eg)
     ingredients = r.calculate_ingredients(args.recipe_list)
     print(json.dumps(ingredients))

@@ -19,12 +19,12 @@ def start_horde_battle(eg, min_ap, verbose):
         return "already_fighting"
 
     if re.search(r"insgesamt \d+ Monster", response.text):
-        printVerbose("Horde wurde gefunden", verbose)
+        print_verbose("Horde wurde gefunden")
     else:
-        printVerbose("Keine Horde gefunden", verbose)
+        print_verbose("Keine Horde gefunden")
         return "no_enemy_group"
     if tr_match := re.search(r"action=group_encounter_npcgroup&group_id=(\d+)'", response.text):
-        printVerbose("Found NPC group encounter: NPC group ID {}".format(tr_match.group(1)), verbose)
+        print_verbose("Found NPC group encounter: NPC group ID {}".format(tr_match.group(1)))
     else:
         print("Kein Match!")
         return "no_group_id"

@@ -24,7 +24,7 @@ def analyseHunt(world,msgid,verbosity):
     overallResult = {}
     counter=0
     for i in re.finditer("battle_id=(\d+)",msg):
-        printVerbose(i.group(1),verbosity)
+        print_verbose(i.group(1))
         res = analyseBattle(world,i.group(1),verbosity)
         counter += 1
         for char in res.keys():
@@ -87,7 +87,7 @@ def analyseBattle(world,battleID,verbosity):
                   name = m.group(2)+" #1"
           else:
               name = m.group(2)
-          printVerbose("Found participant: "+name+", "+m.group(2)+"; Team: "+getTeamSide(m.group(3)),verbosity)
+          print_verbose("Found participant: "+name+", "+m.group(2)+"; Team: "+getTeamSide(m.group(3)))
           participants[m.group(1)] = { "name":name, "miss":0,"hits":0,"krits":0,"dmg":0,"heal":0,"dodged":0,"attacked":0}
           continue
       # dd -> direct damage; non-dot-magie, NK/FK
@@ -99,7 +99,7 @@ def analyseBattle(world,battleID,verbosity):
           mode = int(params[5])
           attack = params[2]
 
-          printVerbose("Found Char "+aID+" using "+attack,verbosity)
+          print_verbose("Found Char "+aID+" using "+attack)
 
           # Bolzenverwendung
           if (g := re.search("\((.*[bB]olzen.*)\)",attack)):
@@ -130,7 +130,7 @@ def analyseBattle(world,battleID,verbosity):
           mode = int(params[5])
           hname = params[2]
 
-          printVerbose("Found Char "+participants[cID]['name']+" using "+hname,verbosity)
+          print_verbose("Found Char "+participants[cID]['name']+" using "+hname)
 
           if mode == 0 or mode == 1:
               participants[cID]['miss'] += 1
@@ -148,7 +148,7 @@ def analyseBattle(world,battleID,verbosity):
           castName = params[2]
           mode = int(params[5])
 
-          printVerbose("Found Char "+participants[cID]['name']+" casting "+castName+" on "+participants[tID]['name'],verbosity)
+          print_verbose("Found Char "+participants[cID]['name']+" casting "+castName+" on "+participants[tID]['name'])
 
           if mode == 3:
               participants[cID]['hits'] += 1
@@ -192,7 +192,7 @@ def analyseBattle(world,battleID,verbosity):
           mode = int(params[4])
           hname = params[1]
 
-          printVerbose("Found Char "+participants[cID]['name']+" using "+hname,verbosity)
+          print_verbose("Found Char "+participants[cID]['name']+" using "+hname)
 
           if mode == 0 or mode == 1:
               participants[cID]['miss'] += 1

@@ -9,10 +9,10 @@ def readCache():
       routeCache = json.load(f)
   except FileNotFoundError:
       routeCache = {}
-#      printVerbose("Route cache not found",verbose)
+#      print_verbose("Route cache not found")
   except json.decoder.JSONDecodeError:
       routeCache = {}
-#      printVerbose("Route cache empty",verbose)
+#      print_verbose("Route cache empty")
   return routeCache
 def writeCache(cache):
   print(cache)
@@ -21,18 +21,18 @@ def writeCache(cache):
   return routeCache
 
 def calculateRoute(sX,sY,tX,tY,verbose,world):
-  printVerbose("Calculating route from "+str(sX)+":"+str(sY)+" to "+str(tX)+":"+str(tY),verbose)
+  print_verbose("Calculating route from "+str(sX)+":"+str(sY)+" to "+str(tX)+":"+str(tY))
   cache = readCache()
   routeName = sX+":"+sY+";"+tX+":"+tY
   if not routeName in cache:
-    printVerbose("Route not found in cache",verbose)
+    print_verbose("Route not found in cache")
     (orderlist,operation_duration, operation, shortestpath) = dijkstra.dijkstra(int(sX),int(sY),int(tX),int(tY),0,world)
     cache[routeName] = {}
     cache[routeName]["orderlist"] = orderlist
     cache[routeName]["operation_duration"] = str(operation_duration)
     writeCache(cache)
   else:
-    printVerbose("Route found in cache",verbose)
+    print_verbose("Route found in cache")
     orderlist = cache[routeName]['orderlist']
     operation_duration = cache[routeName]['operation_duration']
   return orderlist,operation_duration
@@ -67,5 +67,5 @@ def travel(source,target,verbose,add,list,create,world):
       lastTime = date + datetime.timedelta(minutes=order[2])
   if add:
     for order in orderlist:
-      printVerbose("Adding travel commands",verbose)
+      print_verbose("Adding travel commands")
       addTravel(order[0],order[1])

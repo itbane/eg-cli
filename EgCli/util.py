@@ -6,15 +6,21 @@ import json
 
 from EgCli.exceptions import *
 
+VERBOSE=False
+
+def set_verbosity(verbosity: bool):
+    global VERBOSE
+    VERBOSE = verbosity
+
 def readCredentials(verbose):
-  printVerbose("Loging in",verbose)
+  print_verbose("Loging in")
   user=input("User: ")
   password=getpass.getpass()
   return user,password
 
-def printVerbose(msg,verbose):
-  if verbose:
-    print(msg)
+def print_verbose(msg: str):
+    if VERBOSE:
+        print(msg)
 
 def printHeaders():
   print(HDRS)
@@ -187,7 +193,7 @@ class EvergoreClient:
                     user = data['user']
                     password = data['password']
             except (PermissionError, FileNotFoundError, KeyError):
-                printVerbose("config not found, reading from stdin",args.verbose)
+                print_verbose("config not found, reading from stdin")
                 user,password = readCredentials(args.verbose)
 
             return self.__performLogin(user,password)

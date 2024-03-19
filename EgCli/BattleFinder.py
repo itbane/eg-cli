@@ -6,24 +6,24 @@ import getpass
 from EgCli.util import *
 
 def findBattleIDs(world,verbose,player,ll,ul,first):
-  printVerbose("looking for battles on "+world,verbose)
-  printVerbose("Lower bound of battle IDs: "+str(ll),verbose)
-  printVerbose("Upper bound of battle IDs: "+str(ul),verbose)
+  print_verbose("looking for battles on "+world)
+  print_verbose("Lower bound of battle IDs: "+str(ll))
+  print_verbose("Upper bound of battle IDs: "+str(ul))
   if player:
-    printVerbose("Filtering for player "+player,verbose)
+    print_verbose("Filtering for player "+player)
   
   battleID=ll
   while battleID <= ul:
-    printVerbose("looking for battle ID "+str(battleID),verbose)
+    print_verbose("looking for battle ID "+str(battleID))
     battleContent=getBattle(world,battleID)
     print(battleContent)
     print(player)
     if re.search("setParticipant\(.*,[\"']"+player+"[\"']", battleContent):
       print("Battle found: "+str(battleID))
       if first:
-        printVerbose("Got --first parameter, not looking further...",verbose)
+        print_verbose("Got --first parameter, not looking further...")
         break
     elif re.search("Kampfbericht.*Der Kampf existiert nicht.",battleContent):
-      printVerbose("BattleID higher than existing battles - aborting",verbose)
+      print_verbose("BattleID higher than existing battles - aborting")
       break
     battleID+=1
