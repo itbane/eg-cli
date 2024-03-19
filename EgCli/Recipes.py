@@ -11,6 +11,9 @@ def get_arguments():
         "--get-from-guild-storage": {
             "help": "Should the ingredients be taken from guild storage?", "dest": "get_from_guild_storage",
             "action": "store_true"
+        },
+        "--add-recipes": {
+            "help": "Add the calculated recipes", "dest": "add_recipe", "action": "store_true"
         }
     }
     return "Recipes", subarguments
@@ -21,6 +24,7 @@ def get_function():
 class Recipes():
     def __init__(self, eg):
         self.eg = eg
+        self.recipes = self.__get_items()
 
     def __split_recipe_string(self, recipes):
         recipe_dict = {}
@@ -34,6 +38,9 @@ class Recipes():
         for file in glob.glob(r"data/recipes_{}_*.json".format(self.eg.world)):
             recipes.update(read_json(file))
         return recipes
+
+    def get_recipe(self, name: str) -> dict:
+        return self.recipes[name]
 
     def calculate_ingredients(self, recipes):
         if isinstance(recipes, dict):
@@ -56,19 +63,17 @@ class Recipes():
 
         if not recipes:
             raise argparse.ArgumentTypeError("Leere Liste von Bausätzen!")
-        available_recipes = self.__get_items()
         wanted_ingredients = {}
         for recipe, count in recipes.items():
             try:
-                ingredients = available_recipes[recipe]
+                ingredients = self.recipes[recipe][ingredients]
             except KeyError:
                 print("Bausatz '{}' nicht bekannt".format(recipe))
                 os.sys.exit(0)
             for i in ingredients:
                 try:
-                    wanted_ingredients[i["name"]] += int(i["count"])*int(count)
+                    wanted_ingredients[i["name"]] += int(i["count"]) * int(count)
                 except KeyError:
-                    wanted_ingredients[i["name"]] = int(i["count"])*int(count)
+                    wanted_ingredients[i["name"]] = int(i["count"]) * int(count)
 
         return wanted_ingredients
-
