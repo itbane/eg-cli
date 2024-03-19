@@ -10,7 +10,7 @@ def get_arguments():
         "--count-broken": { "action": "store_true", "help": "Auch nicht pristine Gegenstände einbeziehen",
                            "dest": "use_broken" },
         "--wanted-minimum": { "metavar": "<amount>", "help": "Mindestanzahl Gegenstände, die vorhanden sein sollen",
-                             "dest": "wanted_minimum", "type": int },
+                             "dest": "wanted_minimum", "type": int, "default": 5},
         "--list": { "action": "store_true", "help": "Alle Gegenstände listen", "dest": "list_items" },
         "--create-itemlist": { "action": "store_true", "help": "Liste von herzustellenden Items erstellen",
                               "dest": "create_itemlist"},

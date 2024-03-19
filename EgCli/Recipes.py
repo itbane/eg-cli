@@ -66,7 +66,7 @@ class Recipes():
         wanted_ingredients = {}
         for recipe, count in recipes.items():
             try:
-                ingredients = self.recipes[recipe][ingredients]
+                ingredients = self.recipes[recipe]["ingredients"]
             except KeyError:
                 print("Bausatz '{}' nicht bekannt".format(recipe))
                 os.sys.exit(0)
@@ -75,5 +75,4 @@ class Recipes():
                     wanted_ingredients[i["name"]] += int(i["count"]) * int(count)
                 except KeyError:
                     wanted_ingredients[i["name"]] = int(i["count"]) * int(count)
-
         return wanted_ingredients

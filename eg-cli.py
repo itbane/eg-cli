@@ -141,20 +141,30 @@ def guild_storage(eg, args):
     items = gs.list_items(args.item_category, args.use_broken)
     char = character.EvergoreCharacter(eg)
     build_items = {}
+    # take items in queue into account
+    queued_items = char.get_current_craftkits()
+    all_items = char.get_available_recipes(args.item_category)
 
     # print("Anzahl Items: {}".format(len(items)))
-    if args.wanted_minimum or args.create_itemlist:
-        all_items = char.get_available_recipes(args.item_category)
+    if args.create_itemlist or args.add_craftkits:
+        # get list of specific items
         for num in range(1, args.wanted_minimum + 1):
             build_items[num] = []
 
-        for item in all_items:
+        for item in all_items.keys():
             try:
-                if items[item] < args.wanted_minimum:
-                    build_items[args.wanted_minimum - items[item]].append(item)
+                queued_count = queued_items[item]
             except KeyError:
-                build_items[args.wanted_minimum].append(item)
+                # item not in queue
+                queued_count = 0
+            try:
+                comb_item_count = items[item] + queued_count
+            except KeyError:
+                comb_item_count = 0 + queued_count
+            if comb_item_count < args.wanted_minimum:
+                build_items[args.wanted_minimum - comb_item_count].append(item)
     elif args.list_items:
+        # list ALL the items
         for item, amount in items.items():
             print("{}: {}".format(item, args.wanted_minimum))
         return True
@@ -163,18 +173,21 @@ def guild_storage(eg, args):
         return True
 
     if args.wanted_minimum and args.create_itemlist:
+        # only print the list, most required to least
         for count, items in reversed(build_items.items()):
             for name in items:
                 print("{}: Need {} more!".format(name, count))
-    elif args.wanted_minimum and args.add_craftkits:
+    elif args.add_craftkits:
+        # create crafting kits for the required items
         r = Recipes.Recipes(eg)
         time_left = char.get_available_crafting_time()
         recipes = {}
         for count, items in reversed(build_items.items()):
+            # add most required items to list of recipes if they still fit in the available time
             for item in items:
-                printVerbose("looking at {}, wanting {}".format(item, count))
-                printVerbose("  Time left: {}".format(time_left))
-                printVerbose("  Time required: {}".format(r.get_recipe(item)["time"]))
+                print_verbose("looking at {}, wanting {}".format(item, count))
+                print_verbose("  Time left: {}".format(time_left))
+                print_verbose("  Time required: {}".format(r.get_recipe(item)["time"]))
                 if time_left > r.get_recipe(item)["time"]:
                     time_left -= r.get_recipe(item)["time"]
                     try:
@@ -186,10 +199,17 @@ def guild_storage(eg, args):
                         recipes[item] += 1
                     except KeyError:
                         recipes[item] = 1
+        print_verbose("Zu bauende Gegenstände:")
+        print_verbose(recipes)
+        print_verbose("Übrige Zeit: {}".format(time_left))
 
-        print("Zu bauende Gegenstände:")
-        print(recipes)
-        print("Übrige Zeit: {}".format(time_left))
+        recipe_filename = "data/recipes_{}.json".format(str(datetime.date.today()))
+        print_verbose("Liste der zu bauenden Gegenstände wird unter {} abgelegt.".format(recipe_filename))
+        # save the recipes for old times' sake
+        with open (recipe_filename, "w") as f:
+            json.dump(recipes, f, indent=2)
+        gs.get_items_from_storage(r.calculate_ingredients(recipes))
+        char.add_craftkit_list(recipes, args.item_category)
 
 def pull_recipes(eg, args):
     print_verbose("Running PullRecipes")

@@ -167,9 +167,11 @@ class EvergoreClient:
         self.headers["Cookie"] = self.__get_cookie(login, cookie)
         self.__chooseCharacter(world)
 
-    def get_from_eg(self, url, params=None):
+    def get_from_eg(self, url=None, params=None):
         if params is None:
             params = {}
+        if url is None:
+            url = self.link
         return requests.get(url, params=params, headers=self.headers)
 
     def post_to_eg(self, url, params=None, data=None):
