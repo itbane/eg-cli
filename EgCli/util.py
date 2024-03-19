@@ -111,6 +111,33 @@ def printBattleStats(res,filter=[],form='text'):
             except ZeroDivisionError:
                 print("  Ausweichchance: 0%")
 
+def translate_time(timestring: str) -> int:
+    time_string = re.search("((\d+) Tag)?\s*((\d+) Std\.)?\s*((\d+) Min\.)?\s*((\d+)Sek\.)?", timestring)
+    time_seconds = 0
+
+    try:
+        time_seconds += int(time_string.group(8))
+    except(TypeError):
+        # keine Sekunden
+        pass
+    try:
+        time_seconds += int(time_string.group(6)) * 60
+    except(TypeError):
+        # keine Minuten
+        pass
+    try:
+        time_seconds += int(time_string.group(4)) * 3600
+    except(TypeError):
+        # keine Stunden
+        pass
+    try:
+        time_seconds += int(time_string.group(2)) * 86400
+    except(TypeError):
+        # keine Sekunden
+        pass
+
+    return time_seconds
+
 def splitParams(string):
     params = string.split(',')
     for i,v in enumerate(params):
