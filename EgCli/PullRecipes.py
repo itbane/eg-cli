@@ -101,6 +101,7 @@ class PullRecipes():
             ingredients = []
             for ingredient in re.findall(r'>(\d+)\s+(.*?)</font>', item_data.group(2), re.DOTALL):
                 ingredients.append({"count": ingredient[0], "name": ingredient[1]})
-            recipes.update({item_data.group(1): ingredients})
-
+            time_string = re.search(r"Dauer: (.*?)</font>", recipe)
+            time_seconds = translate_time(time_string.group(1))
+            recipes.update({item_data.group(1): {"ingredients": ingredients, "time": time_seconds}})
         return recipes
