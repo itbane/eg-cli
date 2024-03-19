@@ -12,6 +12,9 @@ def get_arguments():
         "--wanted-minimum": { "metavar": "<amount>", "help": "Mindestanzahl Gegenstände, die vorhanden sein sollen",
                              "dest": "wanted_minimum", "type": int },
         "--list": { "action": "store_true", "help": "Alle Gegenstände listen", "dest": "list_items" },
+        "--create-itemlist": { "action": "store_true", "help": "Liste von herzustellenden Items erstellen",
+                              "dest": "create_itemlist"},
+        "--add-craftkits": {"action": "store_true", "help": "Bausätze erstellen", "dest": "add_craftkits"}
     }
     return "GuildStorage", subarguments
 
