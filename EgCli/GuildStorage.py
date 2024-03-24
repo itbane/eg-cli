@@ -74,7 +74,12 @@ class GuildStorage():
             "handwerksmaterial": 32,
             "schwere-rüstung": 23,
             "rohstoffe": 31,
-            "bauteile": 33
+            "bauteile": 33,
+            "schwere-schilde": 25
+        }
+        self.cat_combined = {
+            23: [ "schwere-schilde" ],
+            25: [ "schwere-rüstung" ]
         }
 
     def __get_guild_name(self):
@@ -88,7 +93,7 @@ class GuildStorage():
             return False
         return regex_result.groups(2), regex_result.group(1)
 
-    def list_items(self, cat, count_broken):
+    def list_items(self, cat, count_broken, no_recurse=False):
         next_page = 1
         item_list = {}
         abort = 0
@@ -132,6 +137,13 @@ class GuildStorage():
                 break
             else:
                 abort += 1
+        try:
+            if not no_recurse:
+                for comb_cat in self.cat_combined[self.cat_map[cat]]:
+                    item_list.update(self.list_items(comb_cat, count_broken, no_recurse=True))
+        except KeyError:
+            # keine zusätzliche Liste -> nichts zu tun
+            pass
         # print(items_page.text)
         # print("Nächste Seite: {}".format(next_page))
         return item_list
