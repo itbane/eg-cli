@@ -140,10 +140,16 @@ def guild_storage(eg, args):
     gs = GuildStorage.GuildStorage(eg)
     items = gs.list_items(args.item_category, args.use_broken)
     char = character.EvergoreCharacter(eg)
+
     build_items = {}
     # take items in queue into account
     queued_items = char.get_current_craftkits()
-    all_items = char.get_available_recipes(args.item_category)
+
+    map_craft_and_storage_itemcategories = {
+        "schwere-rüstung": "Schmieden (Schwere Rüstungen)"
+    }
+
+    all_items = char.get_available_recipes(map_craft_and_storage_itemcategories[args.item_category])
 
     # print("Anzahl Items: {}".format(len(items)))
     if args.create_itemlist or args.add_craftkits:
@@ -163,10 +169,11 @@ def guild_storage(eg, args):
                 comb_item_count = 0 + queued_count
             if comb_item_count < args.wanted_minimum:
                 build_items[args.wanted_minimum - comb_item_count].append(item)
+        print(build_items)
     elif args.list_items:
         # list ALL the items
         for item, amount in items.items():
-            print("{}: {}".format(item, args.wanted_minimum))
+            print("{}: {}".format(item, amount))
         return True
     if len(build_items) == 0:
         print("Keine Objekte benötigt")
@@ -182,6 +189,7 @@ def guild_storage(eg, args):
         r = Recipes.Recipes(eg)
         time_left = char.get_available_crafting_time()
         recipes = {}
+
         for count, items in reversed(build_items.items()):
             # add most required items to list of recipes if they still fit in the available time
             for item in items:
@@ -208,8 +216,9 @@ def guild_storage(eg, args):
         # save the recipes for old times' sake
         with open (recipe_filename, "w") as f:
             json.dump(recipes, f, indent=2)
-        gs.get_items_from_storage(r.calculate_ingredients(recipes))
-        char.add_craftkit_list(recipes, args.item_category)
+
+        # gs.get_items_from_storage(r.calculate_ingredients(recipes))
+        char.add_craftkit_list(recipes)
 
 def pull_recipes(eg, args):
     print_verbose("Running PullRecipes")
@@ -224,11 +233,42 @@ def pull_recipes(eg, args):
 def recipes(eg, args):
     print_verbose("Running Recipes")
     r = Recipes.Recipes(eg)
-    ingredients = r.calculate_ingredients(args.recipe_list)
-    print(json.dumps(ingredients))
+    char = character.EvergoreCharacter(eg)
+    if args.itemset is not None:
+        recipe_list = {}
+        # elif args.add_craftkits and args.engrave_target is not None and 
+        print(f"Erstelle Bausätze Set: {args.itemset}")
+        r = Recipes.Recipes(eg)
+        char_recipes = char.get_available_recipes().keys()
+        req_time = 0
+        for item in r.get_items_of_set(args.itemset):
+            if item not in char_recipes:
+                print(f"Bausatz {item} kann nicht hergestellt werden: Rezept nicht bekannt. Breche ab")
+                os.sys.exit(1)
+            recipe_list[item] = 1
+            req_time += r.get_recipe(item)["time"]
+        time_left = char.get_available_crafting_time()
+        if time_left < req_time:
+            print(f"Benötigte Zeit ({req_time}s) ist länger als verfügbare Zeit ({time_left}s). Breche ab.")
+            os.sys.exit(1)
+        ingredients = r.calculate_ingredients(recipe_list)
+
+    elif args.recipe_list is not None:
+        recipe_list = args.recipe_list
+        ingredients = r.calculate_ingredients(args.recipe_list)
+    else:
+        print(f"Kein bekanntes Kommando - verwende entweder '--from-recipe-list' or '--itemset'")
+        os.sys.exit(1)
+    print_verbose(f"Continue to add recipies")
+
+    print(recipe_list)
+    print(ingredients)
+
     if args.get_from_guild_storage:
         gs = GuildStorage.GuildStorage(eg)
         gs.get_items_from_storage(ingredients)
+    if args.add_craftkits:
+        char.add_craftkit_list(recipe_list, target = args.engrave_target)
 
 
 if __name__ == "__main__":
