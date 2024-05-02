@@ -96,12 +96,12 @@ class PullRecipes():
         recipes = {}
         for recipe in re.findall(r'<td><input type="checkbox" .*?</tr>', academy_page.text, re.DOTALL):
             # print(recipe)
-            item_data = re.match(r'.*?<b>([^<]*)</b>.*?Zutaten.*?<br>(.*?</td>)', recipe, re.DOTALL)
+            item_data = re.match(r'.*?<b>(\d+ )?([^<]*)</b>.*?Zutaten.*?<br>(.*?</td>)', recipe, re.DOTALL)
             # print("Name: {}".format(item_data.group(1)))
             ingredients = []
-            for ingredient in re.findall(r'>(\d+)\s+(.*?)</font>', item_data.group(2), re.DOTALL):
+            for ingredient in re.findall(r'>(\d+)\s+(.*?)</font>', item_data.group(3), re.DOTALL):
                 ingredients.append({"count": ingredient[0], "name": ingredient[1]})
             time_string = re.search(r"Dauer: (.*?)</font>", recipe)
             time_seconds = translate_time(time_string.group(1))
-            recipes.update({item_data.group(1): {"ingredients": ingredients, "time": time_seconds}})
+            recipes.update({item_data.group(2): {"ingredients": ingredients, "time": time_seconds}})
         return recipes
