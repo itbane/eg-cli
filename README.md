@@ -52,7 +52,6 @@ Password:
 30:40
 ~~~
 
-
 ## Danksagung
 
 Vielen Dank an das Evergore-Team für das großartige Spiel.
