@@ -217,7 +217,7 @@ def guild_storage(eg, args):
         with open (recipe_filename, "w") as f:
             json.dump(recipes, f, indent=2)
 
-        # gs.get_items_from_storage(r.calculate_ingredients(recipes))
+        gs.get_items_from_storage(r.calculate_ingredients(recipes))
         char.add_craftkit_list(recipes)
 
 def pull_recipes(eg, args):
@@ -236,7 +236,7 @@ def recipes(eg, args):
     char = character.EvergoreCharacter(eg)
     if args.itemset is not None:
         recipe_list = {}
-        # elif args.add_craftkits and args.engrave_target is not None and 
+        # elif args.add_craftkits and args.engrave_target is not None and
         print(f"Erstelle Bausätze Set: {args.itemset}")
         r = Recipes.Recipes(eg)
         char_recipes = char.get_available_recipes().keys()
