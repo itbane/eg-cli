@@ -42,7 +42,7 @@ Anschließend können die Wege berechnet werden:
 ~~~bash
 $ ./eg-cli.py --login RoutePlaner -s "Draga Sol" -t "Dur Celusse" -l
 User: <user>
-Password: 
+Password:
 53:72
 43:58
 42:56
@@ -51,6 +51,7 @@ Password:
 40:45
 30:40
 ~~~
+
 
 ## Danksagung
 
